@@ -1,0 +1,465 @@
+{% extends "admin/base.html" %}
+
+{% block title %}SEO Settings - RustSEO{% endblock %}
+
+{% block content %}
+<div class="rustseo-settings">
+    <div class="settings-header">
+        <h1>
+            <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <circle cx="12" cy="12" r="3"></circle>
+                <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path>
+            </svg>
+            SEO Settings
+        </h1>
+    </div>
+
+    <div class="settings-container">
+        <!-- Settings Navigation -->
+        <nav class="settings-nav">
+            <a href="#general" class="nav-item active" data-tab="general">
+                <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <circle cx="12" cy="12" r="3"></circle>
+                </svg>
+                General
+            </a>
+            <a href="#search-appearance" class="nav-item" data-tab="search-appearance">
+                <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <circle cx="11" cy="11" r="8"></circle>
+                    <path d="m21 21-4.35-4.35"></path>
+                </svg>
+                Search Appearance
+            </a>
+            <a href="#social" class="nav-item" data-tab="social">
+                <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"></path>
+                </svg>
+                Social
+            </a>
+            <a href="#schema" class="nav-item" data-tab="schema">
+                <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <polyline points="16 18 22 12 16 6"></polyline>
+                    <polyline points="8 6 2 12 8 18"></polyline>
+                </svg>
+                Schema
+            </a>
+            <a href="#advanced" class="nav-item" data-tab="advanced">
+                <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M12 20h9"></path>
+                    <path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"></path>
+                </svg>
+                Advanced
+            </a>
+            <a href="#webmaster" class="nav-item" data-tab="webmaster">
+                <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
+                </svg>
+                Webmaster Tools
+            </a>
+        </nav>
+
+        <!-- Settings Content -->
+        <div class="settings-content">
+            <form id="seo-settings-form" method="POST" action="/admin/plugins/rustseo/settings">
+
+                <!-- General Tab -->
+                <div class="settings-tab active" id="tab-general">
+                    <div class="settings-section">
+                        <h2>Site Information</h2>
+                        <p class="section-description">Basic site information used for SEO</p>
+
+                        <div class="form-group">
+                            <label for="site_name">Site Name</label>
+                            <input type="text" id="site_name" name="general.site_name"
+                                   value="{{ settings.site_name }}"
+                                   placeholder="Your Site Name">
+                            <p class="field-help">Used in title templates and schema markup</p>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="separator">Title Separator</label>
+                            <select id="separator" name="general.separator">
+                                <option value=" - " {% if settings.separator == ' - ' %}selected{% endif %}>Dash ( - )</option>
+                                <option value=" | " {% if settings.separator == ' | ' %}selected{% endif %}>Pipe ( | )</option>
+                                <option value=" » " {% if settings.separator == ' » ' %}selected{% endif %}>Guillemet ( » )</option>
+                                <option value=" • " {% if settings.separator == ' • ' %}selected{% endif %}>Bullet ( • )</option>
+                                <option value=" · " {% if settings.separator == ' · ' %}selected{% endif %}>Middle Dot ( · )</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="settings-section">
+                        <h2>Features</h2>
+
+                        <div class="form-group checkbox-group">
+                            <label class="checkbox-label">
+                                <input type="checkbox" name="general.enable_seo_analysis"
+                                       {% if settings.general.enable_seo_analysis %}checked{% endif %}>
+                                <span class="checkbox-text">
+                                    <strong>Enable SEO Analysis</strong>
+                                    <small>Show SEO score and suggestions when editing content</small>
+                                </span>
+                            </label>
+                        </div>
+
+                        <div class="form-group checkbox-group">
+                            <label class="checkbox-label">
+                                <input type="checkbox" name="general.enable_readability_analysis"
+                                       {% if settings.general.enable_readability_analysis %}checked{% endif %}>
+                                <span class="checkbox-text">
+                                    <strong>Enable Readability Analysis</strong>
+                                    <small>Analyze content readability with Flesch score</small>
+                                </span>
+                            </label>
+                        </div>
+
+                        <div class="form-group checkbox-group">
+                            <label class="checkbox-label">
+                                <input type="checkbox" name="general.show_seo_metabox"
+                                       {% if settings.general.show_seo_metabox %}checked{% endif %}>
+                                <span class="checkbox-text">
+                                    <strong>Show SEO Metabox</strong>
+                                    <small>Display SEO controls when editing posts and pages</small>
+                                </span>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Search Appearance Tab -->
+                <div class="settings-tab" id="tab-search-appearance">
+                    <div class="settings-section">
+                        <h2>Title Templates</h2>
+                        <p class="section-description">Configure how titles appear in search results</p>
+
+                        <div class="form-group">
+                            <label for="home_title">Homepage Title</label>
+                            <input type="text" id="home_title" name="titles.home_title"
+                                   value="{{ settings.titles.home_title }}">
+                            <p class="field-help">Available: %%sitename%%, %%tagline%%, %%sep%%</p>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="post_title">Post Title</label>
+                            <input type="text" id="post_title" name="titles.post_title"
+                                   value="{{ settings.titles.post_title }}">
+                            <p class="field-help">Available: %%title%%, %%sitename%%, %%sep%%, %%excerpt%%</p>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="page_title">Page Title</label>
+                            <input type="text" id="page_title" name="titles.page_title"
+                                   value="{{ settings.titles.page_title }}">
+                        </div>
+
+                        <div class="form-group">
+                            <label for="category_title">Category Title</label>
+                            <input type="text" id="category_title" name="titles.category_title"
+                                   value="{{ settings.titles.category_title }}">
+                            <p class="field-help">Available: %%term_title%%, %%sitename%%, %%sep%%</p>
+                        </div>
+                    </div>
+
+                    <div class="settings-section">
+                        <h2>Meta Robots</h2>
+
+                        <div class="form-group checkbox-group">
+                            <label class="checkbox-label">
+                                <input type="checkbox" name="meta.noindex_search"
+                                       {% if settings.meta.noindex_search %}checked{% endif %}>
+                                <span class="checkbox-text">
+                                    <strong>Noindex Search Results</strong>
+                                    <small>Prevent search result pages from being indexed</small>
+                                </span>
+                            </label>
+                        </div>
+
+                        <div class="form-group checkbox-group">
+                            <label class="checkbox-label">
+                                <input type="checkbox" name="meta.noindex_archives"
+                                       {% if settings.meta.noindex_archives %}checked{% endif %}>
+                                <span class="checkbox-text">
+                                    <strong>Noindex Date Archives</strong>
+                                    <small>Prevent date-based archive pages from being indexed</small>
+                                </span>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Social Tab -->
+                <div class="settings-tab" id="tab-social">
+                    <div class="settings-section">
+                        <h2>Facebook / Open Graph</h2>
+
+                        <div class="form-group checkbox-group">
+                            <label class="checkbox-label">
+                                <input type="checkbox" name="social.facebook.opengraph_enabled"
+                                       {% if settings.social.facebook.opengraph_enabled %}checked{% endif %}>
+                                <span class="checkbox-text">
+                                    <strong>Enable Open Graph</strong>
+                                    <small>Add Open Graph meta tags for Facebook sharing</small>
+                                </span>
+                            </label>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="fb_app_id">Facebook App ID</label>
+                            <input type="text" id="fb_app_id" name="social.facebook.app_id"
+                                   value="{{ settings.social.facebook.app_id }}">
+                        </div>
+
+                        <div class="form-group">
+                            <label for="fb_default_image">Default Image</label>
+                            <div class="image-upload-field">
+                                <input type="text" id="fb_default_image" name="social.facebook.default_image"
+                                       value="{{ settings.social.facebook.default_image }}">
+                                <button type="button" class="btn btn-secondary media-upload-btn">Choose</button>
+                            </div>
+                            <p class="field-help">Minimum 1200x630 pixels recommended</p>
+                        </div>
+                    </div>
+
+                    <div class="settings-section">
+                        <h2>Twitter Cards</h2>
+
+                        <div class="form-group checkbox-group">
+                            <label class="checkbox-label">
+                                <input type="checkbox" name="social.twitter.cards_enabled"
+                                       {% if settings.social.twitter.cards_enabled %}checked{% endif %}>
+                                <span class="checkbox-text">
+                                    <strong>Enable Twitter Cards</strong>
+                                    <small>Add Twitter Card meta tags</small>
+                                </span>
+                            </label>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="twitter_card_type">Card Type</label>
+                            <select id="twitter_card_type" name="social.twitter.card_type">
+                                <option value="summary" {% if settings.social.twitter.card_type == 'summary' %}selected{% endif %}>Summary</option>
+                                <option value="summary_large_image" {% if settings.social.twitter.card_type == 'summary_large_image' %}selected{% endif %}>Summary with Large Image</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="twitter_username">Twitter Username</label>
+                            <input type="text" id="twitter_username" name="social.twitter.site_username"
+                                   value="{{ settings.social.twitter.site_username }}"
+                                   placeholder="@username">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Schema Tab -->
+                <div class="settings-tab" id="tab-schema">
+                    <div class="settings-section">
+                        <h2>Schema Settings</h2>
+
+                        <div class="form-group checkbox-group">
+                            <label class="checkbox-label">
+                                <input type="checkbox" name="schema.enabled"
+                                       {% if settings.schema.enabled %}checked{% endif %}>
+                                <span class="checkbox-text">
+                                    <strong>Enable Schema Markup</strong>
+                                    <small>Add JSON-LD structured data to your pages</small>
+                                </span>
+                            </label>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="org_type">Organization Type</label>
+                            <select id="org_type" name="schema.organization_type">
+                                <option value="Organization" {% if settings.schema.organization_type == 'Organization' %}selected{% endif %}>Organization</option>
+                                <option value="LocalBusiness" {% if settings.schema.organization_type == 'LocalBusiness' %}selected{% endif %}>Local Business</option>
+                                <option value="Person" {% if settings.schema.organization_type == 'Person' %}selected{% endif %}>Person</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="org_name">Organization Name</label>
+                            <input type="text" id="org_name" name="schema.organization_name"
+                                   value="{{ settings.schema.organization_name }}">
+                        </div>
+
+                        <div class="form-group">
+                            <label for="org_logo">Organization Logo</label>
+                            <div class="image-upload-field">
+                                <input type="text" id="org_logo" name="schema.organization_logo"
+                                       value="{{ settings.schema.organization_logo }}">
+                                <button type="button" class="btn btn-secondary media-upload-btn">Choose</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="settings-section">
+                        <h2>Breadcrumbs</h2>
+
+                        <div class="form-group checkbox-group">
+                            <label class="checkbox-label">
+                                <input type="checkbox" name="schema.enable_breadcrumbs"
+                                       {% if settings.schema.enable_breadcrumbs %}checked{% endif %}>
+                                <span class="checkbox-text">
+                                    <strong>Enable Breadcrumb Schema</strong>
+                                    <small>Add BreadcrumbList structured data</small>
+                                </span>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Advanced Tab -->
+                <div class="settings-tab" id="tab-advanced">
+                    <div class="settings-section">
+                        <h2>Permalinks</h2>
+
+                        <div class="form-group checkbox-group">
+                            <label class="checkbox-label">
+                                <input type="checkbox" name="advanced.clean_permalinks"
+                                       {% if settings.advanced.clean_permalinks %}checked{% endif %}>
+                                <span class="checkbox-text">
+                                    <strong>Clean Permalinks</strong>
+                                    <small>Remove unnecessary parameters from URLs</small>
+                                </span>
+                            </label>
+                        </div>
+
+                        <div class="form-group checkbox-group">
+                            <label class="checkbox-label">
+                                <input type="checkbox" name="advanced.redirect_attachment_pages"
+                                       {% if settings.general.redirect_attachment_pages %}checked{% endif %}>
+                                <span class="checkbox-text">
+                                    <strong>Redirect Attachment Pages</strong>
+                                    <small>Redirect attachment URLs to parent post</small>
+                                </span>
+                            </label>
+                        </div>
+                    </div>
+
+                    <div class="settings-section">
+                        <h2>Head Cleanup</h2>
+
+                        <div class="form-group checkbox-group">
+                            <label class="checkbox-label">
+                                <input type="checkbox" name="advanced.remove_shortlink"
+                                       {% if settings.advanced.remove_shortlink %}checked{% endif %}>
+                                <span class="checkbox-text">
+                                    <strong>Remove Shortlinks</strong>
+                                    <small>Remove shortlink meta tags from head</small>
+                                </span>
+                            </label>
+                        </div>
+
+                        <div class="form-group checkbox-group">
+                            <label class="checkbox-label">
+                                <input type="checkbox" name="advanced.remove_rsd_link"
+                                       {% if settings.advanced.remove_rsd_link %}checked{% endif %}>
+                                <span class="checkbox-text">
+                                    <strong>Remove RSD Link</strong>
+                                    <small>Remove Really Simple Discovery link</small>
+                                </span>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Webmaster Tab -->
+                <div class="settings-tab" id="tab-webmaster">
+                    <div class="settings-section">
+                        <h2>Search Engine Verification</h2>
+                        <p class="section-description">Add verification codes for webmaster tools</p>
+
+                        <div class="form-group">
+                            <label for="google_verification">Google Search Console</label>
+                            <input type="text" id="google_verification" name="webmaster.google_verification"
+                                   value="{{ settings.webmaster.google_verification }}"
+                                   placeholder="Verification code only">
+                        </div>
+
+                        <div class="form-group">
+                            <label for="bing_verification">Bing Webmaster Tools</label>
+                            <input type="text" id="bing_verification" name="webmaster.bing_verification"
+                                   value="{{ settings.webmaster.bing_verification }}"
+                                   placeholder="Verification code only">
+                        </div>
+
+                        <div class="form-group">
+                            <label for="yandex_verification">Yandex Webmaster</label>
+                            <input type="text" id="yandex_verification" name="webmaster.yandex_verification"
+                                   value="{{ settings.webmaster.yandex_verification }}"
+                                   placeholder="Verification code only">
+                        </div>
+
+                        <div class="form-group">
+                            <label for="pinterest_verification">Pinterest</label>
+                            <input type="text" id="pinterest_verification" name="webmaster.pinterest_verification"
+                                   value="{{ settings.webmaster.pinterest_verification }}"
+                                   placeholder="Verification code only">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Form Actions -->
+                <div class="form-actions">
+                    <button type="submit" class="btn btn-primary">Save Settings</button>
+                    <button type="button" class="btn btn-secondary" id="reset-settings">Reset to Defaults</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Tab navigation
+    const navItems = document.querySelectorAll('.nav-item');
+    const tabs = document.querySelectorAll('.settings-tab');
+
+    navItems.forEach(item => {
+        item.addEventListener('click', function(e) {
+            e.preventDefault();
+            const tabId = this.dataset.tab;
+
+            navItems.forEach(nav => nav.classList.remove('active'));
+            tabs.forEach(tab => tab.classList.remove('active'));
+
+            this.classList.add('active');
+            document.getElementById('tab-' + tabId)?.classList.add('active');
+        });
+    });
+
+    // Form submission
+    document.getElementById('seo-settings-form')?.addEventListener('submit', async function(e) {
+        e.preventDefault();
+        const formData = new FormData(this);
+
+        try {
+            const response = await fetch('/api/plugins/rustseo/settings', {
+                method: 'POST',
+                body: formData
+            });
+
+            if (response.ok) {
+                showNotification('Settings saved successfully', 'success');
+            } else {
+                showNotification('Failed to save settings', 'error');
+            }
+        } catch (error) {
+            showNotification('Error: ' + error.message, 'error');
+        }
+    });
+
+    // Reset settings
+    document.getElementById('reset-settings')?.addEventListener('click', function() {
+        if (confirm('Are you sure you want to reset all settings to defaults?')) {
+            // Reset logic
+        }
+    });
+
+    function showNotification(message, type) {
+        // Notification logic
+        alert(message);
+    }
+});
+</script>
+{% endblock %}

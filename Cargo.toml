@@ -1,0 +1,66 @@
+[package]
+name = "rustseo"
+version = "1.0.0"
+edition = "2021"
+description = "Complete SEO optimization plugin for RustPress"
+authors = ["RustPress Team"]
+license = "GPL-3.0"
+readme = "README.md"
+repository = "https://github.com/rustpress/rustseo"
+keywords = ["seo", "meta-tags", "sitemap", "schema", "rustpress"]
+categories = ["web-programming"]
+
+[lib]
+crate-type = ["cdylib", "rlib"]
+
+[dependencies]
+# RustPress core
+rustpress-core = { path = "../../crates/rustpress-core" }
+rustpress-database = { path = "../../crates/rustpress-database" }
+
+# Async runtime
+tokio = { version = "1", features = ["full"] }
+async-trait = "0.1"
+
+# Serialization
+serde = { version = "1.0", features = ["derive"] }
+serde_json = "1.0"
+toml = "0.8"
+
+# Database
+sqlx = { version = "0.7", features = ["runtime-tokio", "postgres", "uuid", "chrono", "json"] }
+uuid = { version = "1.0", features = ["v4", "v7", "serde"] }
+
+# Time
+chrono = { version = "0.4", features = ["serde"] }
+
+# HTTP client for external checks
+reqwest = { version = "0.11", features = ["json"] }
+
+# XML generation for sitemaps
+quick-xml = { version = "0.31", features = ["serialize"] }
+
+# HTML parsing for analysis
+scraper = "0.18"
+
+# URL handling
+url = "2.5"
+
+# Regex for pattern matching
+regex = "1.10"
+
+# Utilities
+thiserror = "1.0"
+tracing = "0.1"
+
+[dev-dependencies]
+tokio = { version = "1", features = ["full", "test-util"] }
+
+[features]
+default = ["sitemap", "schema", "social"]
+sitemap = []
+schema = []
+social = []
+analytics = []
+redirects = []
+full = ["sitemap", "schema", "social", "analytics", "redirects"]

@@ -1,0 +1,362 @@
+{% extends "admin/base.html" %}
+
+{% block title %}SEO Dashboard - RustSEO{% endblock %}
+
+{% block content %}
+<div class="rustseo-dashboard">
+    <div class="dashboard-header">
+        <h1>
+            <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <circle cx="11" cy="11" r="8"></circle>
+                <path d="m21 21-4.35-4.35"></path>
+            </svg>
+            RustSEO Dashboard
+        </h1>
+        <div class="header-actions">
+            <button class="btn btn-secondary" id="refresh-data">
+                <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <polyline points="23 4 23 10 17 10"></polyline>
+                    <path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"></path>
+                </svg>
+                Refresh
+            </button>
+            <a href="/admin/plugins/rustseo/settings" class="btn btn-primary">
+                <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <circle cx="12" cy="12" r="3"></circle>
+                    <path d="M12 1v6m0 6v6m11-7h-6m-6 0H1"></path>
+                </svg>
+                Settings
+            </a>
+        </div>
+    </div>
+
+    <!-- Overview Cards -->
+    <div class="stats-grid">
+        <div class="stat-card">
+            <div class="stat-icon score">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
+                    <polyline points="22 4 12 14.01 9 11.01"></polyline>
+                </svg>
+            </div>
+            <div class="stat-content">
+                <span class="stat-value">{{ overview.average_seo_score | round }}%</span>
+                <span class="stat-label">Average SEO Score</span>
+            </div>
+        </div>
+
+        <div class="stat-card">
+            <div class="stat-icon posts">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                    <polyline points="14 2 14 8 20 8"></polyline>
+                </svg>
+            </div>
+            <div class="stat-content">
+                <span class="stat-value">{{ overview.total_posts }}</span>
+                <span class="stat-label">Total Posts</span>
+            </div>
+        </div>
+
+        <div class="stat-card">
+            <div class="stat-icon good">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M14 9V5a3 3 0 0 0-3-3l-4 9v11h11.28a2 2 0 0 0 2-1.7l1.38-9a2 2 0 0 0-2-2.3zM7 22H4a2 2 0 0 1-2-2v-7a2 2 0 0 1 2-2h3"></path>
+                </svg>
+            </div>
+            <div class="stat-content">
+                <span class="stat-value">{{ overview.posts_with_good_score }}</span>
+                <span class="stat-label">Good SEO Score</span>
+            </div>
+        </div>
+
+        <div class="stat-card">
+            <div class="stat-icon warning">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path>
+                    <line x1="12" y1="9" x2="12" y2="13"></line>
+                    <line x1="12" y1="17" x2="12.01" y2="17"></line>
+                </svg>
+            </div>
+            <div class="stat-content">
+                <span class="stat-value">{{ overview.posts_needing_improvement }}</span>
+                <span class="stat-label">Need Improvement</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Dashboard Widgets -->
+    <div class="dashboard-widgets">
+        <!-- SEO Issues Widget -->
+        <div class="widget" id="seo-issues-widget">
+            <div class="widget-header">
+                <h2>
+                    <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <circle cx="12" cy="12" r="10"></circle>
+                        <line x1="12" y1="8" x2="12" y2="12"></line>
+                        <line x1="12" y1="16" x2="12.01" y2="16"></line>
+                    </svg>
+                    Issues to Fix
+                </h2>
+                <a href="/admin/plugins/rustseo/analysis?tab=issues" class="widget-link">View All</a>
+            </div>
+            <div class="widget-content">
+                {% if issues %}
+                <ul class="issue-list">
+                    {% for issue in issues %}
+                    <li class="issue-item severity-{{ issue.severity }}">
+                        <span class="issue-icon"></span>
+                        <div class="issue-info">
+                            <span class="issue-type">{{ issue.description }}</span>
+                            <span class="issue-count">{{ issue.count }} posts affected</span>
+                        </div>
+                        {% if issue.action_url %}
+                        <a href="{{ issue.action_url }}" class="btn btn-sm">Fix</a>
+                        {% endif %}
+                    </li>
+                    {% endfor %}
+                </ul>
+                {% else %}
+                <div class="empty-state">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
+                        <polyline points="22 4 12 14.01 9 11.01"></polyline>
+                    </svg>
+                    <p>No issues found! Your SEO is looking great.</p>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+
+        <!-- Recent Posts SEO Widget -->
+        <div class="widget" id="recent-posts-widget">
+            <div class="widget-header">
+                <h2>
+                    <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                        <polyline points="14 2 14 8 20 8"></polyline>
+                    </svg>
+                    Recent Posts SEO
+                </h2>
+                <a href="/admin/plugins/rustseo/analysis" class="widget-link">View All</a>
+            </div>
+            <div class="widget-content">
+                {% if recent_posts %}
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th>Title</th>
+                            <th>Focus Keyword</th>
+                            <th>Score</th>
+                            <th>Issues</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for post in recent_posts %}
+                        <tr>
+                            <td>
+                                <a href="{{ post.url }}" target="_blank">{{ post.title }}</a>
+                            </td>
+                            <td>
+                                {% if post.focus_keyword %}
+                                <span class="keyword-tag">{{ post.focus_keyword }}</span>
+                                {% else %}
+                                <span class="no-keyword">Not set</span>
+                                {% endif %}
+                            </td>
+                            <td>
+                                <div class="score-badge score-{{ post.seo_score | score_class }}">
+                                    {{ post.seo_score }}
+                                </div>
+                            </td>
+                            <td>
+                                {% if post.issues_count > 0 %}
+                                <span class="issues-count">{{ post.issues_count }}</span>
+                                {% else %}
+                                <span class="no-issues">-</span>
+                                {% endif %}
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+                {% else %}
+                <div class="empty-state">
+                    <p>No posts have been analyzed yet.</p>
+                    <a href="/admin/plugins/rustseo/analysis" class="btn btn-primary">Analyze Posts</a>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+
+        <!-- Sitemap Status Widget -->
+        <div class="widget" id="sitemap-widget">
+            <div class="widget-header">
+                <h2>
+                    <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <polygon points="12 2 2 7 12 12 22 7 12 2"></polygon>
+                        <polyline points="2 17 12 22 22 17"></polyline>
+                        <polyline points="2 12 12 17 22 12"></polyline>
+                    </svg>
+                    Sitemap Status
+                </h2>
+                <a href="/admin/plugins/rustseo/sitemaps" class="widget-link">Manage</a>
+            </div>
+            <div class="widget-content">
+                <div class="sitemap-status">
+                    <div class="status-row">
+                        <span class="status-label">Status</span>
+                        <span class="status-value {% if sitemap_status.enabled %}enabled{% else %}disabled{% endif %}">
+                            {{ "Enabled" if sitemap_status.enabled else "Disabled" }}
+                        </span>
+                    </div>
+                    <div class="status-row">
+                        <span class="status-label">Total URLs</span>
+                        <span class="status-value">{{ sitemap_status.total_urls }}</span>
+                    </div>
+                    <div class="status-row">
+                        <span class="status-label">Last Generated</span>
+                        <span class="status-value">
+                            {{ sitemap_status.last_generated | date_format if sitemap_status.last_generated else "Never" }}
+                        </span>
+                    </div>
+                    {% if sitemap_status.indexed_urls %}
+                    <div class="status-row">
+                        <span class="status-label">Indexed URLs</span>
+                        <span class="status-value">{{ sitemap_status.indexed_urls }}</span>
+                    </div>
+                    {% endif %}
+                </div>
+                <div class="widget-actions">
+                    <a href="{{ sitemap_status.sitemap_url }}" target="_blank" class="btn btn-secondary btn-sm">
+                        View Sitemap
+                    </a>
+                    <button class="btn btn-primary btn-sm" id="regenerate-sitemap">
+                        Regenerate
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Quick Actions Widget -->
+        <div class="widget" id="quick-actions-widget">
+            <div class="widget-header">
+                <h2>
+                    <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon>
+                    </svg>
+                    Quick Actions
+                </h2>
+            </div>
+            <div class="widget-content">
+                <div class="quick-actions-grid">
+                    <a href="/admin/plugins/rustseo/analysis" class="action-card">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <circle cx="11" cy="11" r="8"></circle>
+                            <path d="m21 21-4.35-4.35"></path>
+                        </svg>
+                        <span>Analyze All</span>
+                    </a>
+                    <a href="/admin/plugins/rustseo/redirects" class="action-card">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <polyline points="9 18 15 12 9 6"></polyline>
+                        </svg>
+                        <span>Redirects</span>
+                    </a>
+                    <a href="/admin/plugins/rustseo/robots" class="action-card">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M12 2L2 7l10 5 10-5-10-5z"></path>
+                            <path d="M2 17l10 5 10-5"></path>
+                            <path d="M2 12l10 5 10-5"></path>
+                        </svg>
+                        <span>Robots.txt</span>
+                    </a>
+                    <a href="/admin/plugins/rustseo/tools" class="action-card">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"></path>
+                        </svg>
+                        <span>Tools</span>
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Search Console Widget -->
+        {% if search_console %}
+        <div class="widget" id="search-console-widget">
+            <div class="widget-header">
+                <h2>
+                    <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M21 12V7H5a2 2 0 0 1 0-4h14v4"></path>
+                        <path d="M3 5v14a2 2 0 0 0 2 2h16v-5"></path>
+                        <path d="M18 12a2 2 0 0 0 0 4h4v-4z"></path>
+                    </svg>
+                    Search Console
+                </h2>
+            </div>
+            <div class="widget-content">
+                {% if search_console.connected %}
+                <div class="sc-stats">
+                    <div class="sc-stat">
+                        <span class="sc-value">{{ search_console.total_clicks | number_format }}</span>
+                        <span class="sc-label">Clicks</span>
+                    </div>
+                    <div class="sc-stat">
+                        <span class="sc-value">{{ search_console.total_impressions | number_format }}</span>
+                        <span class="sc-label">Impressions</span>
+                    </div>
+                    <div class="sc-stat">
+                        <span class="sc-value">{{ search_console.average_ctr | percentage }}</span>
+                        <span class="sc-label">Avg CTR</span>
+                    </div>
+                    <div class="sc-stat">
+                        <span class="sc-value">{{ search_console.average_position | round(1) }}</span>
+                        <span class="sc-label">Avg Position</span>
+                    </div>
+                </div>
+                {% else %}
+                <div class="empty-state">
+                    <p>Connect to Google Search Console for insights.</p>
+                    <a href="/admin/plugins/rustseo/settings?tab=integrations" class="btn btn-primary">Connect</a>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+        {% endif %}
+    </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Refresh data
+    document.getElementById('refresh-data')?.addEventListener('click', function() {
+        location.reload();
+    });
+
+    // Regenerate sitemap
+    document.getElementById('regenerate-sitemap')?.addEventListener('click', async function() {
+        const btn = this;
+        btn.disabled = true;
+        btn.textContent = 'Regenerating...';
+
+        try {
+            const response = await fetch('/api/plugins/rustseo/sitemaps/regenerate', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' }
+            });
+
+            if (response.ok) {
+                location.reload();
+            } else {
+                alert('Failed to regenerate sitemap');
+            }
+        } catch (error) {
+            alert('Error: ' + error.message);
+        } finally {
+            btn.disabled = false;
+            btn.textContent = 'Regenerate';
+        }
+    });
+});
+</script>
+{% endblock %}

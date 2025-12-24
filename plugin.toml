@@ -1,0 +1,186 @@
+# RustSEO - SEO Optimization Plugin for RustPress
+# Complete SEO solution with meta tags, sitemaps, schema markup, and social integration
+
+[plugin]
+id = "rustseo"
+name = "RustSEO"
+version = "1.0.0"
+description = "Complete SEO optimization - meta tags, XML sitemaps, schema markup, OpenGraph, Twitter Cards, and SEO analysis"
+author = "RustPress Team"
+author_url = "https://rustpress.dev"
+homepage = "https://rustpress.dev/plugins/rustseo"
+license = "GPL-3.0"
+min_rustpress_version = "1.0.0"
+tags = ["seo", "meta-tags", "sitemap", "schema", "opengraph", "twitter-cards", "search-engine"]
+
+[plugin.capabilities]
+manage_options = true
+add_meta_tags = true
+generate_sitemaps = true
+add_schema_markup = true
+add_admin_pages = true
+add_rest_api = true
+modify_head = true
+modify_robots = true
+
+[plugin.features]
+meta_tags = true
+xml_sitemap = true
+schema_markup = true
+opengraph = true
+twitter_cards = true
+breadcrumbs = true
+canonical_urls = true
+robots_txt = true
+redirects = true
+seo_analysis = true
+keyword_tracking = true
+link_monitoring = true
+
+[plugin.settings]
+# General
+site_title_separator = " | "
+title_format = "post_title | site_name"
+homepage_title = ""
+homepage_description = ""
+
+# Sitemap
+sitemap_enabled = true
+sitemap_posts_per_page = 1000
+sitemap_include_images = true
+sitemap_include_lastmod = true
+sitemap_ping_search_engines = true
+
+# Schema
+schema_organization_enabled = true
+schema_website_enabled = true
+schema_breadcrumbs_enabled = true
+schema_article_enabled = true
+schema_local_business_enabled = false
+
+# Social
+opengraph_enabled = true
+twitter_cards_enabled = true
+default_og_image = ""
+twitter_site_handle = ""
+facebook_app_id = ""
+
+# Robots
+robots_txt_enabled = true
+noindex_archives = false
+noindex_categories = false
+noindex_tags = true
+noindex_author_archives = true
+noindex_date_archives = true
+noindex_search_results = true
+
+# Redirects
+redirect_attachment_pages = true
+redirect_404_to_homepage = false
+
+# Analysis
+content_analysis_enabled = true
+readability_analysis_enabled = true
+keyword_density_target = 2.0
+min_content_length = 300
+
+[plugin.hooks]
+actions = [
+    "init",
+    "wp_head",
+    "wp_footer",
+    "save_post",
+    "delete_post",
+    "rustseo_sitemap_generated",
+    "rustseo_meta_updated",
+    "rustseo_analysis_complete"
+]
+filters = [
+    "rustseo_title",
+    "rustseo_description",
+    "rustseo_canonical",
+    "rustseo_robots",
+    "rustseo_schema",
+    "rustseo_opengraph",
+    "rustseo_twitter_card",
+    "rustseo_sitemap_urls",
+    "rustseo_breadcrumbs"
+]
+
+[plugin.admin_menu]
+parent = "plugins"
+base_url = "/admin/plugins/rustseo"
+
+[[plugin.admin_menu.items]]
+title = "RustSEO"
+slug = "rustseo"
+icon = "search"
+position = 30
+
+[[plugin.admin_menu.items.submenu]]
+title = "Dashboard"
+slug = "rustseo"
+capability = "manage_rustseo"
+
+[[plugin.admin_menu.items.submenu]]
+title = "General Settings"
+slug = "rustseo/settings"
+capability = "manage_rustseo"
+
+[[plugin.admin_menu.items.submenu]]
+title = "Search Appearance"
+slug = "rustseo/appearance"
+capability = "manage_rustseo"
+
+[[plugin.admin_menu.items.submenu]]
+title = "Social Media"
+slug = "rustseo/social"
+capability = "manage_rustseo"
+
+[[plugin.admin_menu.items.submenu]]
+title = "XML Sitemaps"
+slug = "rustseo/sitemaps"
+capability = "manage_rustseo"
+
+[[plugin.admin_menu.items.submenu]]
+title = "Schema Markup"
+slug = "rustseo/schema"
+capability = "manage_rustseo"
+
+[[plugin.admin_menu.items.submenu]]
+title = "Redirects"
+slug = "rustseo/redirects"
+capability = "manage_rustseo"
+
+[[plugin.admin_menu.items.submenu]]
+title = "Robots.txt"
+slug = "rustseo/robots"
+capability = "manage_rustseo"
+
+[[plugin.admin_menu.items.submenu]]
+title = "SEO Analysis"
+slug = "rustseo/analysis"
+capability = "manage_rustseo"
+
+[[plugin.admin_menu.items.submenu]]
+title = "Tools"
+slug = "rustseo/tools"
+capability = "manage_rustseo"
+
+[plugin.rest_api]
+namespace = "seo/v1"
+endpoints = [
+    "meta",
+    "meta/{id}",
+    "sitemap",
+    "sitemap/regenerate",
+    "schema",
+    "redirects",
+    "redirects/{id}",
+    "analysis/{id}",
+    "robots",
+    "settings"
+]
+
+[dependencies]
+optional = []
